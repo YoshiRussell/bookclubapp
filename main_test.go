@@ -3,29 +3,41 @@
 package main
 
 import (
+	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/gin-gonic/gin"
+	"github.com/stretchr/testify/assert"
 )
 
+func performRequest(r http.Handler, method, path string) *httptest.ResponseRecorder {
+	req, _ := http.NewRequest(method, path, nil)
+	w := httptest.NewRecorder()
+	r.ServeHTTP(w, req)
+	return w
+}
+
 func TestHandler(t *testing.T) {
-	req, err := http.NewRequest("GET", "", nil)
-	if err != nil {
-		t.Fatal(err)
+	// expected body
+	expected := gin.H{
+		"message": "fortnite",
 	}
 
-	recorder := httptest.NewRecorder()
-	hf := http.HandlerFunc(handler)
-	hf.ServeHTTP(recorder, req)
+	router := SetupRouter()
+	response := performRequest(router, "GET", "/epic")
 
-	if status := recorder.Code; status != http.StatusOK {
-		t.Errorf("handler returned wrong status code: got %v want %v",
-			status, http.StatusOK)
-	}
+	assert.Equal(t, http.StatusOK, response.Code)
 
-	expected := "Welcome to the epic fortnite book club app!\n"
-	actual := recorder.Body.String()
-	if actual != expected {
-		t.Errorf("handler returned unexpected body: got %v want %v", actual, expected)
-	}
+	// Convert the JSON response to a map
+	var jsonResponse map[string]string
+	err := json.Unmarshal([]byte(response.Body.Bytes()), &jsonResponse)
+	assert.Nil(t, err)
+
+	value, exists := jsonResponse["message"]
+
+	// Make some assertions on the correctness of the response.
+	assert.True(t, exists)
+	assert.Equal(t, expected["message"], value)
 }
