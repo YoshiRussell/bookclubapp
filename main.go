@@ -1,23 +1,21 @@
 package main
 
 import (
-	"fmt"
-	"net/http"
-
-	"github.com/gorilla/mux"
+	"github.com/gin-gonic/gin"
 )
 
-func newRouter() *mux.Router {
-	r := mux.NewRouter()
-	r.HandleFunc("/", handler).Methods("GET")
+func SetupRouter() *gin.Engine {
+	r := gin.Default()
+	r.GET("/epic", epicHandler)
 	return r
 }
-
 func main() {
-	r := newRouter()
-	http.ListenAndServe(":8080", r)
+	router := SetupRouter()
+	router.Run()
 }
 
-func handler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Welcome to the epic fortnite book club app!\n")
+func epicHandler(c *gin.Context) {
+	c.JSON(200, gin.H{
+		"message": "fortnite",
+	})
 }
