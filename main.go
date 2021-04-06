@@ -8,3 +8,4 @@ func main() {
 	router := routes.SetupRouter()
 	router.Run()
 }
+
