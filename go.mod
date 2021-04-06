@@ -1,4 +1,4 @@
-module github.com/edwindo/bookclubapp
+module github.com/YoshiRussell/bookclubapp
 
 go 1.16
 
