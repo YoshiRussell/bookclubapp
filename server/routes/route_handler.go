@@ -9,7 +9,7 @@ import (
 func SetupRouter() *gin.Engine {
 	r := gin.Default()
 	r.GET("/", rootHandler)
-	r.GET("/mydashboard", middleware.DummyMiddleware, dashboardHandler)
+	r.GET("/mydashboard", middleware.Auth0Middleware(), dashboardHandler)
 	r.GET("/epic", epicHandler)
 	return r
 }
@@ -20,6 +20,7 @@ func rootHandler(c *gin.Context) {
 }
 
 // This should only be reached by authenticated users
+// Must include Authorization header with access token in request
 func dashboardHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H {
 		"username" : "Yoshi",

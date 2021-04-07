@@ -2,6 +2,8 @@ package middleware
 
 import (
 	"fmt"
+	"log"
+	"strings"
 	"net/http"
 	"errors"
 	"encoding/json"
@@ -28,13 +30,11 @@ type JSONWebKeys struct {
 	X5c []string `json:"x5c"`
 }
 
-// ** API ** //
-var devAud string = "http://localhost:8080"
-var prodAud string = "https://nillbookclub/api"
+// ** Auth0 API identifier** //
+var aud string = "https://nillbookclub/api"
 
-// ** Client ** //
-var devIss string = "http://localhost:3000/"
-var prodIss string = "https://nillbookclub/"
+// ** Auth0 tenant identifier ** //
+var iss string = "https://dev-35574pmo.us.auth0.com/"
 
 var jwtMiddleware *jwtmiddleware.JWTMiddleware 
 
@@ -43,13 +43,13 @@ func init() {
 		ValidationKeyGetter: func(token *jwt.Token) (interface{}, error) {
 			
 			// ** Check that claims[aud] == our API ** //
-			checkAud := token.Claims.(jwt.MapClaims).VerifyAudience(devAud, false)
+			checkAud := token.Claims.(jwt.MapClaims).VerifyAudience(aud, false)
 			if !checkAud {
 				return token, errors.New("Invalid audience")
 			}
 
 			// ** Check that claims[iss] == client **//
-			checkIss := token.Claims.(jwt.MapClaims).VerifyIssuer(devIss, false)
+			checkIss := token.Claims.(jwt.MapClaims).VerifyIssuer(iss, false)
 			if !checkIss {
 				return token, errors.New("Invalid issuer")
 			}
@@ -70,7 +70,7 @@ func init() {
 
 func getPemCert(token *jwt.Token) (string, error) {
 	cert := ""
-	resp, err := http.Get(devIss + ".well-known/jwks.json")
+	resp, err := http.Get(iss + ".well-known/jwks.json")
 	if err != nil {
 		return cert, err
 	}
@@ -96,3 +96,30 @@ func getPemCert(token *jwt.Token) (string, error) {
 	return cert, nil
 }
 
+func Auth0Middleware() gin.HandlerFunc {
+	return func(context *gin.Context) {
+		err := jwtMiddleware.CheckJWT(context.Writer, context.Request)
+		if err != nil {
+			log.Printf("error validating auth token: %v\n", err)
+			context.Abort()
+			context.Writer.WriteHeader(http.StatusUnauthorized)
+			context.Writer.Write([]byte("Unauthorized"))
+			return
+		}
+
+		authToken := context.Request.Header["Authorization"][0]
+		authToken = strings.Split(authToken, "Bearer ")[1]
+		parsedToken, _ := jwt.ParseWithClaims(authToken, &jwt.StandardClaims{}, nil)
+		if err != nil {
+			log.Printf("error parsing token: %v\n", err)
+			context.Abort()
+			context.Writer.WriteHeader(http.StatusUnauthorized)
+			context.Writer.Write([]byte("Unauthorized"))
+			return
+		}
+
+		tokenData := parsedToken.Claims.(*jwt.StandardClaims)
+		log.Printf("claims retrieved %+v\n", tokenData)
+		context.Set("userid", tokenData.Subject)
+	}
+}
