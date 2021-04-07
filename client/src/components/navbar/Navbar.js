@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
-import { MenuItems } from './MenuItems'
-import { Button } from '../Button'
+import { LinkContainer } from "react-router-bootstrap";
 import './Navbar.css'
 
 class Navbar extends Component {
@@ -14,23 +13,26 @@ class Navbar extends Component {
     render() {
         return(
             <nav className="NavbarItems">
-                <h1 className="navbar-logo">Nill Book Club <i className='fas fa-quran'></i></h1>
+                <LinkContainer to="/">
+                    <h1 className="navbar-logo">Nill Book Club <i className='fas fa-quran'></i></h1>
+                </LinkContainer>
                 <div className="menu-icon" onClick={this.handleClick}>
                     <i className={this.state.clicked ? 'fas fa-times' : 'fas fa-bars'}></i>
                 </div>
+
                 <ul className={this.state.clicked ? 'nav-menu active' : 'nav-menu'}>
-                    {MenuItems.map((item, index) => {
-                        return (
-                            <li key={index}>
-                                <a className={item.cName} href={item.url}>
-                                    {item.title}
-                                </a>
-                            </li>
-                        )
-                    })}
+                    <li>
+                        <LinkContainer to="/">
+                            <a className="nav-links" href="/">Home</a>
+                        </LinkContainer>
+                    </li>
+                    <li>
+                        <LinkContainer to="/login">
+                            <a className="nav-links" href="/login">Login</a>
+                        </LinkContainer>
+                    </li>
                     
                 </ul>
-                <Button>Sign Up</Button>
             </nav>
         )
     }
