@@ -70,6 +70,8 @@ func init() {
 
 func getPemCert(token *jwt.Token) (string, error) {
 	cert := ""
+
+	// ** request for public key from auth0 tenant endpoint ** //
 	resp, err := http.Get(iss + ".well-known/jwks.json")
 	if err != nil {
 		return cert, err
