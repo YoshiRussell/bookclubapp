@@ -1,37 +1,10 @@
 package database
 
 import (
-	"database/sql"
 	"github.com/YoshiRussell/bookclubapp/server/models"
 )
 
-type Bookstore interface {
-	GetALLBooks() ([]models.Book, error)
-	Close()
-}
-
-// wrapper for database environment
-// allows us to decide which database to use
-type DbENV struct {
-	DB *sql.DB
-}
-
-func DatabaseENVInit(local bool, mock bool) (Bookstore, error) {
-	if mock {
-		return MockDatabaseENVInit()
-	}
-	
-	bookstore := DbENV{}
-	var err error
-	if local {
-		bookstore.DB, err = sql.Open("postgres", "postgres://yoshitest:password@localhost/bookclubtest?sslmode=disable")
-	} else {
-		bookstore.DB, err = sql.Open("postgres", "someOtherPathForLegitDB")
-	}
-	return &bookstore, err
-}
-
-func (this *DbENV) GetALLBooks() ([]models.Book, error) {
+func (this *Db) GetALLBooks() ([]models.Book, error) {
 	rows, err := this.DB.Query("SELECT * FROM books;")
 	if err != nil {
 		return nil, err
@@ -53,7 +26,7 @@ func (this *DbENV) GetALLBooks() ([]models.Book, error) {
 	return bks, nil
 }
 
-func (this *DbENV) Close() {
+func (this *Db) Close() {
 	this.DB.Close()
 }
 
