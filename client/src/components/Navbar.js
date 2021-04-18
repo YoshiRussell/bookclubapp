@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import { LinkContainer } from "react-router-bootstrap";
-import './Navbar.css'
+import '../styles/Navbar.css'
 
 class Navbar extends Component {
     state = { clicked: false }

@@ -1,45 +1,18 @@
-import React, { useState } from 'react';
-import Form from 'react-bootstrap/Form';
+import React from 'react';
 import Button from 'react-bootstrap/Button';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './Login.css';
+import '../styles/Login.css';
+import { useAuth0 } from "@auth0/auth0-react";
 
 export default function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  
+    const { loginWithRedirect } = useAuth0();
 
-  function validateForm() {
-    return email.length > 0 && password.length > 0;
-  }
-
-  function handleSubmit(event) {
-    event.preventDefault();
-  }
-
-  return (
-    <div className="Login">
-      <Form onSubmit={handleSubmit}>
-        <Form.Group size="lg" controlId="email">
-          <Form.Label>Username </Form.Label>
-          <Form.Control
-            autoFocus
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </Form.Group>
-        <Form.Group size="lg" controlId="password">
-          <Form.Label>Password </Form.Label>
-          <Form.Control
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </Form.Group>
-        <Button variant="dark" block size="lg" type="submit" disabled={!validateForm()}>
-          Login
-        </Button>
-      </Form>
-    </div>
-  );
+    return (
+        <div className="Login">
+            <Button variant="dark" block size="lg" onClick={()=>loginWithRedirect()}>
+            Login
+            </Button>
+        </div>
+    );
 }
