@@ -88,7 +88,7 @@
 
     .navbar-logo {
         position: absolute;
-        top: 0;
+        top: -10px;
         left: 0;
         transform: translate(25%, 50%);
     }
@@ -96,7 +96,7 @@
     .menu-icon {
         display: block;
         position: absolute;
-        top: 0;
+        top: -5px;
         right: 0;
         transform: translate(-100%, 60%);
         font-size:  1.8rem;
