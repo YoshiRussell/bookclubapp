@@ -2,8 +2,10 @@ package database
 
 import (
 	"github.com/YoshiRussell/bookclubapp/server/models"
+	"github.com/YoshiRussell/bookclubapp/util"
 	"database/sql"
 )
+
 
 func DatabaseENVInit(local bool, mock bool) (Bookstore, error) {
 	if mock {
@@ -11,9 +13,14 @@ func DatabaseENVInit(local bool, mock bool) (Bookstore, error) {
 	}
 
 	bookstore := Db{}
-	var err error
+	config, err := util.LoadConfig("../../util")
+	if err != nil {
+		return nil, err
+	}
+	//var err error
 	if local {
-		bookstore.DB, err = sql.Open("postgres", "postgres://yoshitest:password@localhost/bookclubtest?sslmode=disable")
+		bookstore.DB, err = sql.Open("postgres", config.DBSource)
+		//bookstore.DB, err = sql.Open("postgres", "postgres://yoshitest:password@localhost/bookclubtest?sslmode=disable")
 	} else {
 		bookstore.DB, err = sql.Open("postgres", "someOtherPathForLegitDB")
 	}
