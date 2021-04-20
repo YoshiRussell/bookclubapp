@@ -12,7 +12,9 @@ ReactDOM.render(
         <Auth0Provider
             domain="dev-35574pmo.us.auth0.com"
             clientId="D48g8ocuBvbFz3xRhsqVnbdB8pvr2LEV"
-            redirectUri={window.location.origin + '/profile'}>
+            redirectUri={window.location.origin + '/profile'}
+            audience="https://nillbookclub/api"
+            scope="read:userbooks write:userbooks">
             <App />
         </Auth0Provider>
     </Router>

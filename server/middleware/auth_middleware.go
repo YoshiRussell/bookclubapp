@@ -42,17 +42,17 @@ func init() {
 	jwtMiddleware = jwtmiddleware.New(jwtmiddleware.Options {
 		ValidationKeyGetter: func(token *jwt.Token) (interface{}, error) {
 			
-			// ** Check that claims[aud] == our API ** //
-			checkAud := token.Claims.(jwt.MapClaims).VerifyAudience(aud, false)
-			if !checkAud {
-				return token, errors.New("Invalid audience")
-			}
+			// // ** Check that claims[aud] == our API ** //
+			// checkAud := token.Claims.(jwt.MapClaims).VerifyAudience(aud, false)
+			// if !checkAud {
+			// 	return token, errors.New("Invalid audience!")
+			// }
 
-			// ** Check that claims[iss] == client **//
-			checkIss := token.Claims.(jwt.MapClaims).VerifyIssuer(iss, false)
-			if !checkIss {
-				return token, errors.New("Invalid issuer")
-			}
+			// // ** Check that claims[iss] == client **//
+			// checkIss := token.Claims.(jwt.MapClaims).VerifyIssuer(iss, false)
+			// if !checkIss {
+			// 	return token, errors.New("Invalid issuer")
+			// }
 
 			// ** Acquire public key from Auth0 tenant endpoint ** //
 			cert, err := getPemCert(token)
