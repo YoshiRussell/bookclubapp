@@ -17,7 +17,7 @@ func DatabaseENVInit(local bool, mock bool) (Bookstore, error) {
 	if err != nil {
 		return nil, err
 	}
-	//var err error
+	
 	if local {
 		bookstore.DB, err = sql.Open("postgres", config.DBSource)
 		//bookstore.DB, err = sql.Open("postgres", "postgres://yoshitest:password@localhost/bookclubtest?sslmode=disable")

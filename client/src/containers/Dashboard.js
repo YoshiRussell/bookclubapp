@@ -3,7 +3,7 @@ import { useAuth0 } from '@auth0/auth0-react';
 import LogoutButton from '../components/LogoutButton';
 import useApi from '../hooks/useApi';
 
-export default function Profile() {
+export default function Dashboard() {
     const { isAuthenticated } = useAuth0();
     const [userMetadata, setUserMetadata] = useState(null);
     const { error, loading, data } = useApi(
