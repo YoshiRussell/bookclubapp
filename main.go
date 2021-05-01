@@ -9,7 +9,7 @@ import (
 func main() {
 
 	// boolean defines if we are in testing environment
-	bookstoreDB, err := database.DatabaseENVInit(true, true)
+	bookstoreDB, err := database.DatabaseENVInit(true, false)
 	if err != nil {
 		panic(err)
 	}

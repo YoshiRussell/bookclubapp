@@ -6,13 +6,14 @@ import (
 )
 
 type Bookstore interface {
-	GetALLBooks() ([]models.Book, error)
+	CreateUserIfNew(userid string)
+	CreateBookIfNew(isbn string)
 	Close()
 }
 
 // ** IMPLEMENTS THE BOOKSTORE INTERFACE ** //
 type MockDb struct {
-	DB map[string]models.Book
+	DB map[string][]models.Book
 }
 
 // ** IMPLEMENTS THE BOOKSTORE INTERFACE ** //

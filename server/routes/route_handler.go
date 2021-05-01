@@ -34,24 +34,16 @@ func rootHandler(c *gin.Context) {
 // This should only be reached by authenticated users
 // Must include Authorization header with access token in request
 func dashboardHandler(c *gin.Context) {
-	userid, useridExists := c.Get("userid")
+	useridFromContext, useridExists := c.Get("userid")
 	if !useridExists {
 		panic("Something went wrong retrieving the userid!")
 	}
 
 	Db := c.MustGet("DB").(database.Bookstore)
-	
-	bks, err := Db.GetALLBooks()
-	if err != nil {
-		panic(err)
-	}
-
-	for _, bk := range bks {
-		fmt.Printf(bk.Author)
-	}
-	//Db.CreateUserIfNew(userid);
-	
+	userid := fmt.Sprintf("%v", useridFromContext)
 	fmt.Println(userid)
+	Db.CreateUserIfNew(userid);
+	Db.CreateBookIfNew("9780132350884");
 
 	c.JSON(http.StatusOK, gin.H {
 		"username" : "Yoshi",

@@ -5,12 +5,23 @@ import (
 	"github.com/YoshiRussell/bookclubapp/server/models"
 )
 
-func (this *MockDb) GetALLBooks() ([]models.Book, error) {
-	bks := make([]models.Book, 0)
-	for _, v := range this.DB {
-		fmt.Println(v.Author)
+func (this *MockDb) CreateUserIfNew(userid string) {
+	if _, ok := this.DB[userid]; !ok {
+		this.DB[userid] = make([]models.Book, 0)
 	}
-	return bks, nil
+}
+
+func (this *MockDb) CreateBookIfNew(isbn string) {
+	fmt.Printf("created mock book")
+}
+
+func (this *MockDb) GetALLUsers() ([]string, error) {
+	users := make([]string, 0)
+	for user, _ := range this.DB {
+		users = append(users, user)
+		fmt.Println(user)
+	}
+	return users, nil
 }
 
 func (this *MockDb) Close() {

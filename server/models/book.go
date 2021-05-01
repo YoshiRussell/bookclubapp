@@ -2,7 +2,7 @@ package models
 
 type Book struct {
 	Isbn string
+	AuthorFirstName string
+	AuthorLastName string
 	Title string
-	Author string
-	Price float32
 }
