@@ -11,6 +11,16 @@ func (this *MockDb) CreateUserIfNew(userid string) {
 	}
 }
 
+func (this *MockDb) AddBookToUsersBooks(userid string, isbn string) {
+	fmt.Printf(userid)
+	fmt.Printf(isbn)
+}
+
+func (this *MockDb) GetUsersBooks(userid string) ([]models.Book, error) {
+	bks:= make([]models.Book, 0)
+	return bks, nil
+}
+
 func (this *MockDb) CreateBookIfNew(isbn string) {
 	fmt.Printf("created mock book")
 }

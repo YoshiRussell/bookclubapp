@@ -19,8 +19,8 @@ func (bookstore *Db) CreateUserBookRelationTableIfNotExist() {
 	bookstore.CreateUserTableIfNotExist()
 	bookstore.CreateBooksTableIfNotExist()
 	_, err := bookstore.DB.Exec(`CREATE TABLE IF NOT EXISTS user_books (
-							user_id		CHAR(50) REFERENCES users ON DELETE CASCADE,
-							isbn		CHAR(13) REFERENCES books ON DELETE CASCADE,
+							user_id		CHAR(50) REFERENCES users (user_id) ON DELETE CASCADE,
+							isbn		CHAR(13) REFERENCES books (isbn) ON DELETE CASCADE,
 							PRIMARY KEY (user_id, isbn)
 					   );`)
 	if err != nil {
@@ -51,12 +51,17 @@ func (bookstore *Db) CreateUserTableIfNotExist() {
 
 func (bookstore *Db) AddBookToUsersBooks(userid string, isbn string) {
 	bookExists := bookstore.rowExists(`SELECT isbn FROM books WHERE isbn=$1`, isbn)
-	//userBookRelationExists := bookstore.rowExists(`SELECT isbn FROM users u JOIN user_books ub ON u.user_id = ub.user_id JOIN books b ON ub.isbn = b.isbn`)
-	
-	fmt.Println(userid)
 	if !bookExists {
 		bookstore.CreateBookIfNew(isbn)
 	}
+
+	_, err := bookstore.DB.Exec(`INSERT INTO user_books (user_id, isbn) VALUES ($1, $2) ON CONFLICT (user_id, isbn) DO NOTHING;`, userid, isbn)
+	if err != nil {
+		panic(err)
+	}
+	
+	fmt.Println(userid)
+	
 }
 
 func (bookstore *Db) CreateBookIfNew(isbn string) {
@@ -80,9 +85,10 @@ func (bookstore *Db) CreateBookIfNew(isbn string) {
 	}
 }
 
+
 func (bookstore *Db) rowExists(query string, args ...interface{}) bool {
 	var exists bool
-	query = fmt.Sprintf("SELECT EXISTS (%s)", query)
+	query = fmt.Sprintf("SELECT EXISTS (%s);", query)
 	err := bookstore.DB.QueryRow(query, args...).Scan(&exists)
 	if err != nil && err != sql.ErrNoRows {
 		panic(err)
@@ -91,7 +97,13 @@ func (bookstore *Db) rowExists(query string, args ...interface{}) bool {
 }
 
 func (bookstore *Db) GetUsersBooks(userid string) ([]models.Book, error) {
-	rows, err := bookstore.DB.Query(`SELECT * FROM books WHERE isbn IN (SELECT isbn FROM user_books WHERE user_id = $1)`, userid)
+	rows, err := bookstore.DB.Query(`SELECT books.* 
+										FROM books
+										INNER JOIN user_books
+												ON (books.isbn = user_books.isbn) 
+										INNER JOIN users
+											ON (users.user_id = user_books.user_id)
+										WHERE (users.user_id = $1);`, userid)
 	if err != nil {
 		return nil, err
 	}
@@ -114,9 +126,6 @@ func (bookstore *Db) GetUsersBooks(userid string) ([]models.Book, error) {
 	return bks, nil
 }
 
-// func (bookstore *DB) GetAllUsers() ([]string, error) {
-
-// }
 
 func (bookstore *Db) Close() {
 	bookstore.DB.Close()

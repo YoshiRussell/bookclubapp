@@ -32,6 +32,9 @@ export default function Dashboard() {
                 <div>
                     {userMetadata.username}
                     {userMetadata.pageNumber}
+                    {userMetadata.books.map(book => 
+                        <li>{book.Title}</li>
+                    )}
                     <LogoutButton/>
                 </div>
             </div>

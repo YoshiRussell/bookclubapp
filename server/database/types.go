@@ -7,8 +7,9 @@ import (
 
 type Bookstore interface {
 	CreateUserIfNew(userid string)
-	CreateBookIfNew(isbn string)
-	Close()
+	GetUsersBooks(userid string) ([]models.Book, error)
+	AddBookToUsersBooks(userid string, isbn string) 
+ 	Close()
 }
 
 // ** IMPLEMENTS THE BOOKSTORE INTERFACE ** //

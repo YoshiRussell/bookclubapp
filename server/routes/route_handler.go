@@ -42,12 +42,17 @@ func dashboardHandler(c *gin.Context) {
 	Db := c.MustGet("DB").(database.Bookstore)
 	userid := fmt.Sprintf("%v", useridFromContext)
 	fmt.Println(userid)
-	Db.CreateUserIfNew(userid);
-	Db.CreateBookIfNew("9780132350884");
+	Db.CreateUserIfNew(userid)
+	Db.AddBookToUsersBooks(userid, "9780132350884")
+	bks, err := Db.GetUsersBooks(userid)
+	if err != nil {
+		panic(err)
+	}
 
 	c.JSON(http.StatusOK, gin.H {
 		"username" : "Yoshi",
 		"pageNumber" : 22,
+		"books" : bks,
 	})
 }
 
