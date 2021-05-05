@@ -126,6 +126,10 @@ func (bookstore *Db) GetUsersBooks(userid string) ([]models.Book, error) {
 	return bks, nil
 }
 
+func (bookstore *Db) Ping() error {
+	err := bookstore.DB.Ping()
+	return err
+}
 
 func (bookstore *Db) Close() {
 	bookstore.DB.Close()

@@ -22,6 +22,7 @@ func SetupRouter(bookStoreDB database.Bookstore) *gin.Engine {
 
 	r.GET("/", rootHandler)
 	r.GET("/mydashboard", middleware.Auth0Middleware(), dashboardHandler)
+	r.POST("/mydashboard", middleware.Auth0Middleware(), dashboardHandler2)
 	r.GET("/epic", epicHandler)
 	return r
 }
@@ -41,9 +42,7 @@ func dashboardHandler(c *gin.Context) {
 
 	Db := c.MustGet("DB").(database.Bookstore)
 	userid := fmt.Sprintf("%v", useridFromContext)
-	fmt.Println(userid)
 	Db.CreateUserIfNew(userid)
-	Db.AddBookToUsersBooks(userid, "9780132350884")
 	bks, err := Db.GetUsersBooks(userid)
 	if err != nil {
 		panic(err)
@@ -54,6 +53,25 @@ func dashboardHandler(c *gin.Context) {
 		"pageNumber" : 22,
 		"books" : bks,
 	})
+}
+
+func dashboardHandler2(c *gin.Context) {
+	useridFromContext, useridExists := c.Get("userid")
+	if !useridExists {
+		panic("Something went wrong retrieving the userid!")
+	}
+
+	q := c.Request.URL.Query()
+	isbn, ok := q["isbn"]; 
+	if !ok {
+		panic("isbn not included in query")
+	}
+	
+	Db := c.MustGet("DB").(database.Bookstore)
+	userid := fmt.Sprintf("%v", useridFromContext)
+
+	Db.AddBookToUsersBooks(userid, isbn[0])
+	c.Status(http.StatusOK)
 }
 
 func epicHandler(c *gin.Context) {

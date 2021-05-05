@@ -8,7 +8,8 @@ import (
 type Bookstore interface {
 	CreateUserIfNew(userid string)
 	GetUsersBooks(userid string) ([]models.Book, error)
-	AddBookToUsersBooks(userid string, isbn string) 
+	AddBookToUsersBooks(userid string, isbn string)
+	Ping() error
  	Close()
 }
 

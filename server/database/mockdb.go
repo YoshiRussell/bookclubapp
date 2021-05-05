@@ -34,6 +34,11 @@ func (this *MockDb) GetALLUsers() ([]string, error) {
 	return users, nil
 }
 
+func (this *MockDb) Ping() error {
+	fmt.Println("pinging mock database")
+	return nil
+}
+
 func (this *MockDb) Close() {
 	fmt.Println("closing mock database")
 }

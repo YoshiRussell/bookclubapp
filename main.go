@@ -13,6 +13,10 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	err = bookstoreDB.Ping()
+	if err != nil {
+		panic(err)
+	}
 	defer bookstoreDB.Close()
 
 	router := routes.SetupRouter(bookstoreDB)

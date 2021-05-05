@@ -22,14 +22,13 @@ const useApi = (url, options ={}) => {
                 });
 
                 setState({
-                    ...state,
                     data: await response.json(),
                     error: null,
                     loading: false,
                 });
             } catch (error) {
                 setState({
-                    ...state,
+                    data: null,
                     error,
                     loading: false,
                 });
