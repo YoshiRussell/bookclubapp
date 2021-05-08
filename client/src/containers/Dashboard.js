@@ -11,11 +11,9 @@ export default function Dashboard() {
     const { isAuthenticated } = useAuth0();
     const [userMetadata, setUserMetadata] = useState(null);
     const { error, loading, data } = useApi(
-        'http://localhost:8080/mydashboard',
-        {
-            audience, 
-            scope
-        }
+        'http://localhost:8080/mydashboard', 
+        { audience, scope },
+        "GET", true
     );
 
     useEffect(() => {
